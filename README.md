@@ -2,4 +2,7 @@
 
 ## Модули
 - **hello-world** - пример gradle подмодуля с Kotlin JVM
+
+## TODO
+- добавить GitLab CI
 - 

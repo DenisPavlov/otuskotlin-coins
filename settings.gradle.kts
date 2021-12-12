@@ -9,3 +9,4 @@ pluginManagement {
 }
 
 include("hello-world")
+include("dsl-example")
