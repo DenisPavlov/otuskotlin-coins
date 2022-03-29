@@ -1,13 +1,10 @@
 plugins {
     kotlin("multiplatform")
+    id("com.github.johnrengelman.shadow")
 }
 
 group = "otuskotlin-coins"
 version = "0.0.1"
-
-repositories {
-    mavenCentral()
-}
 
 val ktorVersion: String by project
 val logbackVersion: String by project
@@ -53,5 +50,28 @@ kotlin {
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:$reactVersion")
             }
         }
+    }
+}
+
+// include JS artifacts in any JAR we generate and package to jar with all dependencies
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    val taskName = if (project.hasProperty("isProduction")
+        || project.gradle.startParameter.taskNames.contains("installDist")
+    ) {
+        "jsBrowserProductionWebpack"
+    } else {
+        "jsBrowserDevelopmentWebpack"
+    }
+    val webpackTask = tasks.getByName<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>(taskName)
+    dependsOn(webpackTask) // make sure JS gets compiled first
+    from(File(webpackTask.destinationDirectory, webpackTask.outputFileName)) // bring output file along into the JAR
+    manifest {
+        attributes("Main-Class" to "otuscotlin.coins.web.server.ServerKt")
+    }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "17"
     }
 }
