@@ -5,8 +5,10 @@ pluginManagement {
 
     plugins {
         kotlin("jvm") version kotlinVersion
+        kotlin("multiplatform") version kotlinVersion
     }
 }
 
 include("hello-world")
 include("dsl-example")
+include("web-ui")
